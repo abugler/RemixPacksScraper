@@ -45,15 +45,19 @@ while current_link:
     if current_link is not None:
         current_link = str(current_link['href'])
 
+
 # Collect Yandex Links
 for link in title_links:
     raw_html = raw_get_content(link)
     soup = BeautifulSoup(raw_html, 'html.parser')
     yandex_download_links.append(str(soup.find("form", target="_blank")['action']))
 
+yandex_download_links = [l + "\n" for l in yandex_download_links]
 yandex_saved_list = "yandex_list.txt"
 with open(yandex_saved_list, "w") as file:
-    file.writelines(yandex_download_links)
+    file.writelines()
+
+
 
 # Download Files
 
