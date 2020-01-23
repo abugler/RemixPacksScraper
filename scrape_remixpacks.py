@@ -1,10 +1,9 @@
 from requests import get, post
 from requests.exceptions import RequestException
 from bs4 import BeautifulSoup
-from bs4 import NavigableString
 # from selenium import webdriver
 from contextlib import closing
-from datetime import datetime
+from time import sleep
 
 given_url = "https://remixpacks.ru"
 title_links = []
@@ -36,7 +35,9 @@ def raw_get_content(link):
 # Collect Title Links
 current_link = given_url
 while current_link:
-    raw_html = raw_get_content(given_url)
+    sleep(1)
+    print("Scraping: %s"%(current_link))
+    raw_html = raw_get_content(current_link)
     soup = BeautifulSoup(raw_html, 'html.parser')
     title_stems = soup.find_all(class_="titlestems")
     for stem in title_stems:
@@ -44,10 +45,14 @@ while current_link:
     current_link = soup.find(class_="nextpostslink")
     if current_link is not None:
         current_link = str(current_link['href'])
+    #if len(title_links) == 40:
+     #   break
 
 
 # Collect Yandex Links
 for link in title_links:
+    sleep(1)
+    print("Scraping: %s" % (link))
     raw_html = raw_get_content(link)
     soup = BeautifulSoup(raw_html, 'html.parser')
     yandex_download_links.append(str(soup.find("form", target="_blank")['action']))
@@ -55,12 +60,10 @@ for link in title_links:
 yandex_download_links = [l + "\n" for l in yandex_download_links]
 yandex_saved_list = "yandex_list.txt"
 with open(yandex_saved_list, "w") as file:
-    file.writelines()
-
-
+    file.writelines(yandex_download_links)
 
 # Download Files
-
+# Yandex Disk was making me very sad
 # driver = webdriver.PhantomJS('phantomjs.exe')
 # driver.set_window_size(1000, 1000)
 # for link in yandex_download_links:
